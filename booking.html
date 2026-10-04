@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Book Your Stay | The Ivory Crest</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <div class="logo">THE IVORY CREST</div>
+
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#rooms">Rooms</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="booking-page">
+
+        <div class="booking-page-heading">
+            <h1>Book Your Stay</h1>
+            <p>Where Luxury Meets Comfort</p>
+        </div>
+        <div class="booking-room-info">
+    <h2 id="booking-room-name">Selected Room</h2>
+
+    <p>
+        👥 Capacity: <span id="booking-room-capacity">-</span> guests
+    </p>
+
+    <p>
+        🛏️ Bed Setup: <span id="booking-room-bed">-</span>
+    </p>
+
+    <h3>Room Features</h3>
+
+    <div id="booking-room-features" class="booking-features"></div>
+</div>
+<div class="ivory-privilege">
+    <h2>✨ Ivory Crest Privilege</h2>
+
+    <p>
+        Enjoy complimentary access to our hotel facilities during your stay.
+    </p>
+
+    <div class="privilege-list">
+        <span>🏊 Swimming Pool</span>
+        <span>🏋️ Fitness Gym</span>
+        <span>🎮 Recreation Area</span>
+        <span>🍽️ Restaurant & Dining</span>
+        <span>📶 Free Wi-Fi</span>
+        <span>🚗 Free Parking</span>
+        <span>🛎️ 24/7 Room Service</span>
+    </div>
+</div>
+
+        <form id="booking-form" class="booking-form">
+
+            <div class="form-group">
+                <label for="guest-name">Full Name</label>
+                <input type="text" id="guest-name" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="guest-email">Email Address</label>
+                <input type="email" id="guest-email" placeholder="Enter your email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="room-type">Select Room</label>
+
+                <select id="room-type" required>
+                    <option value="">Choose a room</option>
+                    <option value="2000">Standard Room - ₹2,000/night</option>
+                    <option value="3500">Deluxe Room - ₹3,500/night</option>
+                    <option value="7000">Executive Suite - ₹7,000/night</option>
+                    <option value="12000">Presidential Suite - ₹12,000/night</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="checkin">Check-in Date</label>
+                <input type="date" id="checkin" required>
+            </div>
+
+            <div class="form-group">
+                <label for="checkout">Check-out Date</label>
+                <input type="date" id="checkout" required>
+                <button type="button" id="check-availability" class="availability-btn">
+    Check Availability
+</button>
+
+<p id="availability-message"></p>
+            </div>
+
+
+            <div class="form-group">
+                <label for="guests">Number of Guests</label>
+                <input type="number" id="guests" min="1" value="1" required>
+                <p id="capacity-message"></p>
+            </div>
+            <div class="form-group">
+    <label for="payment-method">Payment Method</label>
+
+    <select id="payment-method" required>
+        <option value="">Choose a payment method</option>
+        <option value="hotel">Pay at Hotel</option>
+        <option value="upi">UPI</option>
+        <option value="card">Credit / Debit Card</option>
+        <option value="netbanking">Net Banking</option>
+    </select>
+</div>
+<div id="upi-details" class="payment-details" style="display: none;">
+    <div class="form-group">
+        <label for="upi-id">UPI ID</label>
+        <input type="text" id="upi-id" placeholder="Enter your UPI ID">
+    </div>
+</div>
+
+<div id="card-details" class="payment-details" style="display: none;">
+    <div class="form-group">
+        <label for="card-number">Card Number</label>
+        <input type="text" id="card-number" placeholder="Enter card number">
+
+        <label for="card-name">Cardholder Name</label>
+        <input type="text" id="card-name" placeholder="Enter cardholder name">
+
+        <label for="card-expiry">Expiry Date</label>
+        <input type="text" id="card-expiry" placeholder="MM/YY">
+
+        <label for="card-cvv">CVV</label>
+        <input type="password" id="card-cvv" placeholder="Enter CVV">
+    </div>
+</div>
+
+<div id="netbanking-details" class="payment-details" style="display: none;">
+    <div class="form-group">
+        <label for="bank-name">Select Bank</label>
+        <select id="bank-name">
+            <option value="">Choose your bank</option>
+            <option value="sbi">State Bank of India</option>
+            <option value="hdfc">HDFC Bank</option>
+            <option value="icici">ICICI Bank</option>
+            <option value="axis">Axis Bank</option>
+        </select>
+    </div>
+</div>
+<div class="refund-policy">
+    <h3>Refund & Cancellation Policy</h3>
+
+    <p>
+        Free cancellation is available up to 24 hours before check-in.
+        Cancellations made within 24 hours of check-in may be subject to
+        cancellation charges.
+    </p>
+
+    <p>
+        Eligible refunds will be processed to the original payment method.
+        Pay-at-hotel bookings do not require an advance payment.
+    </p>
+</div>
+
+            <div class="price-summary">
+    <p>Price per night: ₹<span id="price-per-night">0</span></p>
+    <p>Total nights: <span id="total-nights">0</span></p>
+    <p>Rooms required: <span id="rooms-required">1</span></p>
+    <h3>Total Price: ₹<span id="total-price">0</span></h3>
+</div>
+
+            <button type="submit" class="booking-btn">Continue Booking</button>
+
+        </form>
+
+    </main>
+    <footer class="site-footer">
+
+    <div class="footer-content">
+
+        <div class="footer-about">
+            <h3>The Ivory Crest</h3>
+            <p>Where Luxury Meets Comfort.</p>
+            <p>
+                A refined stay designed around comfort,
+                hospitality, and memorable experiences.
+            </p>
+        </div>
+
+        <div class="footer-links">
+            <h3>Quick Links</h3>
+            <a href="index.html">Home</a>
+            <a href="index.html#rooms">Rooms</a>
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact</a>
+            <a href="my-bookings.html">My Bookings</a>
+            <a href="booking.html">Book Now</a>
+            <a href="admin.html">Admin</a>
+            <a href="reviews.html">Guests reviews</a>
+        </div>
+
+        <div class="footer-contact">
+            <h3>Contact</h3>
+            <p>📍 City Centre</p>
+            <p>
+                📞 <a href="tel:+919876543210">+91 98765 43210</a>
+            </p>
+            <p>
+                ✉️ <a href="mailto:info@ivorycrest.com">info@ivorycrest.com</a>
+            </p>
+            <p>🕐 Reception: Open 24 hours</p>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        <p>© 2026 The Ivory Crest. All Rights Reserved.</p>
+        <a href="about.html#refund-policy">Refund & Cancellation Policy</a>
+    </div>
+
+</footer>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

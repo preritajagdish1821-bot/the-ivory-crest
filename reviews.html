@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Guest Reviews | The Ivory Crest</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <div class="logo">The Ivory Crest</div>
+
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#rooms">Rooms</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="reviews.html">Reviews</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+
+            <a href="booking.html" class="book-btn">Book Now</a>
+        </nav>
+    </header>
+
+
+    <main>
+
+        <section class="guest-reviews">
+
+            <h2>Guest Reviews</h2>
+
+            <p class="reviews-intro">
+                Share your experience at The Ivory Crest.
+            </p>
+
+
+            <div class="review-form">
+
+                <h3>Write a Review</h3>
+
+                <label for="review-name">Your Name</label>
+
+                <input
+                    type="text"
+                    id="review-name"
+                    placeholder="Enter your name"
+                    required
+                >
+
+
+                <label>Your Rating</label>
+
+                <div class="star-rating">
+
+    <input type="radio" id="star1" name="rating" value="1">
+    <label for="star1">☆</label>
+
+    <input type="radio" id="star2" name="rating" value="2">
+    <label for="star2">☆</label>
+
+    <input type="radio" id="star3" name="rating" value="3">
+    <label for="star3">☆</label>
+
+    <input type="radio" id="star4" name="rating" value="4">
+    <label for="star4">☆</label>
+
+    <input type="radio" id="star5" name="rating" value="5">
+    <label for="star5">☆</label>
+
+</div>
+
+
+                <label for="review-text">Your Review</label>
+
+                <textarea
+                    id="review-text"
+                    rows="5"
+                    placeholder="Write about your stay..."
+                    required
+                ></textarea>
+
+
+                <button
+                    type="button"
+                    id="submit-review">
+                    Submit Review
+                </button>
+
+                <p id="review-message"></p>
+
+            </div>
+
+
+            <div class="reviews-display">
+
+                <h3>What Our Guests Say</h3>
+
+                <div id="reviews-list">
+                    <p>Loading reviews...</p>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer class="site-footer">
+
+        <div class="footer-content">
+
+            <div class="footer-about">
+                <h3>The Ivory Crest</h3>
+
+                <p>Where Luxury Meets Comfort.</p>
+
+                <p>
+                    A refined stay designed around comfort,
+                    hospitality, and memorable experiences.
+                </p>
+            </div>
+
+
+            <div class="footer-links">
+
+                <h3>Quick Links</h3>
+
+                <a href="index.html">Home</a>
+                <a href="index.html#rooms">Rooms</a>
+                <a href="about.html">About Us</a>
+                <a href="reviews.html">Guest Reviews</a>
+                <a href="contact.html">Contact</a>
+                <a href="my-bookings.html">My Bookings</a>
+                <a href="booking.html">Book Now</a>
+                <a href="admin.html">Admin</a>
+
+            </div>
+
+
+            <div class="footer-contact">
+
+                <h3>Contact</h3>
+
+                <p>📍 City Centre</p>
+                <p>📞 +91 98765 43210</p>
+                <p>✉️ info@ivorycrest.com</p>
+                <p>🕐 Reception: Open 24 hours</p>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <p>
+                © 2026 The Ivory Crest. All Rights Reserved.
+            </p>
+
+            <a href="about.html#refund-policy">
+                Refund & Cancellation Policy
+            </a>
+
+        </div>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
