@@ -1468,7 +1468,7 @@ confirmButtons.forEach(function(button) {
             button.getAttribute("data-booking-id");
 
         fetch(`/api/bookings/${bookingID}/confirm`, {
-            method: "PUT"
+            method: "PUT",
             headers: {
         "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
     }
@@ -1896,7 +1896,8 @@ if (adminLoginForm) {
 
     });
 
-}// =========================
+}
+// =========================
 // ADMIN PAGE PROTECTION
 // =========================
 
