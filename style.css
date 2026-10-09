@@ -2100,3 +2100,93 @@ nav ul li a {
         font-size: 28px;
     }
 }
+/* Mobile homepage improvements */
+@media screen and (max-width: 700px) {
+    html,
+    body {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        overflow-x: hidden;
+    }
+
+    header,
+    nav,
+    .hero,
+    .rooms {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    nav {
+        padding: 14px 12px;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    nav .logo {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    nav ul {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px 14px;
+    }
+
+    nav ul li a {
+        font-size: 14px;
+    }
+
+    nav .book-btn {
+        padding: 10px 18px;
+    }
+
+    .hero {
+        min-height: 460px;
+        padding: 30px 12px;
+    }
+
+    .hero-content {
+        width: 100%;
+        max-width: 100%;
+        padding: 20px 12px;
+    }
+
+    .hero h1 {
+        font-size: 34px;
+        line-height: 1.2;
+    }
+
+    .hero h2 {
+        font-size: 21px;
+    }
+
+    .hero p {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    .rooms {
+        padding: 45px 14px;
+    }
+
+    .room-container {
+        width: 100%;
+    }
+
+    .room-card {
+        width: 100%;
+        max-width: 360px;
+    }
+
+    .room-buttons {
+        flex-direction: column;
+    }
+
+    .room-buttons .room-btn {
+        width: 100%;
+    }
+}
