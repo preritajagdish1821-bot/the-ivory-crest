@@ -1469,7 +1469,10 @@ confirmButtons.forEach(function(button) {
 
         fetch(`/api/bookings/${bookingID}/confirm`, {
             method: "PUT"
-        })
+            headers: {
+        "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
+    }
+})
         .then(function(response) {
             return response.json();
         })
@@ -1774,6 +1777,9 @@ if (adminReviews) {
                             `/api/reviews/${reviewID}`,
                             {
                                 method: "DELETE"
+                                headers: {
+        "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
+    }
                             }
                         )
                         .then(function(response) {
