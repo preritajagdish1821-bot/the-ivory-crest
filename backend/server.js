@@ -2,9 +2,10 @@ const express = require("express");
 const cors = require("cors");
 const Database = require("better-sqlite3");
 const crypto = require("crypto");
+const path = require("path");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const roomInventory = {
     "Standard Room - ₹2,000/night": 10,
     "Deluxe Room - ₹3,500/night": 8,
@@ -17,6 +18,11 @@ const adminPassword = process.env.ADMIN_PASSWORD;
 const adminSessions = new Map();
 app.use(express.json());
 app.use(cors());
+app.use("/backend", (req, res) => {
+    res.sendStatus(404);
+});
+
+app.use(express.static(path.join(__dirname, "..")));
 
 const db = new Database("ivory-crest.db");
 
