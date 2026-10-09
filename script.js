@@ -1776,7 +1776,7 @@ if (adminReviews) {
                         fetch(
                             `/api/reviews/${reviewID}`,
                             {
-                                method: "DELETE"
+                                method: "DELETE",
                                 headers: {
         "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
     }
