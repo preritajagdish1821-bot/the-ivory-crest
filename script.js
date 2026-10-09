@@ -184,8 +184,23 @@ if (availabilityResult.availableRooms < rooms) {
                 return;
             }
 
-            localStorage.setItem("booking", JSON.stringify(booking));
+localStorage.setItem("booking", JSON.stringify(booking));
 
+const myBookings = JSON.parse(
+    localStorage.getItem("myBookings") || "[]"
+);
+
+const updatedBookings = [
+    booking,
+    ...myBookings.filter(
+        item => item.bookingID !== booking.bookingID
+    )
+];
+
+localStorage.setItem(
+    "myBookings",
+    JSON.stringify(updatedBookings)
+);
             window.location.href = "confirmation.html";
 
         } catch (error) {
@@ -1117,93 +1132,122 @@ if (availabilityButton) {
 const bookingDetails = document.getElementById("booking-details");
 
 if (bookingDetails) {
-    fetch("/api/bookings")
-        .then(function(response) {
-            return response.json();
-        })
-    
-        .then(function(bookings) {
+    let savedBookings = [];
 
-            if (bookings.length === 0) {
-                bookingDetails.innerHTML = "<p>No booking found.</p>";
-                return;
-            }
-        
-            bookingDetails.innerHTML = bookings.map(function(booking) {
-    return `
-        <div class="booking-card">
-            <h2>${booking.room_type}</h2>
-
-            <p><strong>Booking ID:</strong> ${booking.booking_id}</p>
-            <p><strong>Guest Name:</strong> ${booking.guest_name}</p>
-            <p><strong>Email:</strong> ${booking.guest_email}</p>
-            <p><strong>Check-in:</strong> ${booking.checkin}</p>
-            <p><strong>Check-out:</strong> ${booking.checkout}</p>
-            <p><strong>Guests:</strong> ${booking.guests}</p>
-            <p><strong>Payment Method:</strong> ${
-    booking.payment_method === "upi" ? "UPI" :
-    booking.payment_method === "card" ? "Credit / Debit Card" :
-    booking.payment_method === "netbanking" ? "Net Banking" :
-    "Pay at Hotel"
-}</p>
-            <p><strong>Rooms:</strong> ${booking.rooms}</p>
-            <p><strong>Total Price:</strong> ₹${booking.total_price}</p>
-
-<p>
-    <strong>Status:</strong>
-    <span class="status status-${(booking.booking_status || "Pending").toLowerCase()}">
-        ${booking.booking_status || "Pending"}
-    </span>
-</p>
-
-<button class="cancel-btn" data-booking-id="${booking.booking_id}">
-    Cancel Booking
-</button>
-        </div>
-    `;
-}).join("");
-const cancelButtons = document.querySelectorAll(".cancel-btn");
-
-cancelButtons.forEach(function(button) {
-
-    button.addEventListener("click", function() {
-
-        const bookingID = button.getAttribute("data-booking-id");
-
-        const confirmCancel = confirm(
-            "Are you sure you want to cancel this booking?"
+    try {
+        savedBookings = JSON.parse(
+            localStorage.getItem("myBookings") || "[]"
         );
 
-        if (!confirmCancel) {
-            return;
+        const latest = JSON.parse(
+            localStorage.getItem("booking") || "null"
+        );
+
+        if (
+            latest &&
+            latest.bookingID &&
+            !savedBookings.some(b => b.bookingID === latest.bookingID)
+        ) {
+            savedBookings.unshift(latest);
         }
+    } catch (error) {
+        savedBookings = [];
+    }
 
-        fetch(`/api/bookings/${bookingID}`, {
-            method: "DELETE"
-        })
-            .then(function(response) {
-                return response.json();
-            })
-            .then(function(result) {
+    if (!savedBookings.length) {
+        bookingDetails.textContent =
+            "No bookings saved in this browser yet.";
+    } else {
+        Promise.all(savedBookings.map(saved => {
+            const id = saved.bookingID;
+            const email = saved.email;
 
-                if (!result.success) {
-                    alert("Booking could not be cancelled.");
-                    return;
-                }
+            if (!id || !email) return null;
 
-                alert("Your booking has been cancelled.");
+            return fetch(
+                `/api/bookings/${encodeURIComponent(id)}?email=${encodeURIComponent(email)}`
+            ).then(response => response.ok ? response.json() : null);
+        }))
+        .then(bookings => {
+            bookings = bookings.filter(Boolean);
 
-                window.location.reload();
-            })
-            .catch(function(error) {
-                console.error(error);
-                alert("Could not connect to the booking server.");
+            if (!bookings.length) {
+                bookingDetails.textContent =
+                    "No matching bookings found in this browser.";
+                return;
+            }
+
+            bookingDetails.innerHTML = bookings.map(booking => `
+                <div class="booking-card">
+                    <h2>${booking.room_type}</h2>
+                    <p><strong>Booking ID:</strong> ${booking.booking_id}</p>
+                    <p><strong>Guest:</strong> ${booking.guest_name}</p>
+                    <p><strong>Check-in:</strong> ${booking.checkin}</p>
+                    <p><strong>Check-out:</strong> ${booking.checkout}</p>
+                    <p><strong>Guests:</strong> ${booking.guests}</p>
+                    <p><strong>Rooms:</strong> ${booking.rooms}</p>
+                    <p><strong>Total:</strong> ₹${booking.total_price}</p>
+                    <p><strong>Status:</strong> ${booking.booking_status}</p>
+                    ${booking.booking_status !== "Confirmed"
+                        ? `<button class="cancel-btn"
+                            data-booking-id="${booking.booking_id}">
+                            Cancel Booking
+                           </button>`
+                        : ""}
+                </div>
+            `).join("");
+
+            document.querySelectorAll(".cancel-btn").forEach(button => {
+                button.addEventListener("click", async function () {
+                    const id = button.dataset.bookingId;
+                    const saved = savedBookings.find(
+                        b => b.bookingID === id
+                    );
+
+                    if (!saved || !confirm("Cancel this booking?")) return;
+
+                    try {
+                        const response = await fetch(
+                            `/api/bookings/${encodeURIComponent(id)}?email=${encodeURIComponent(saved.email)}`,
+                            { method: "DELETE" }
+                        );
+
+                        const result = await response.json();
+
+                        if (!response.ok || !result.success) {
+                            alert(result.message || "Cancellation failed.");
+                            return;
+                        }
+
+                        const remaining = savedBookings.filter(
+                            b => b.bookingID !== id
+                        );
+
+                        localStorage.setItem(
+                            "myBookings",
+                            JSON.stringify(remaining)
+                        );
+
+                        if (saved.bookingID ===
+                            JSON.parse(localStorage.getItem("booking") || "null")?.bookingID) {
+                            localStorage.removeItem("booking");
+                        }
+
+                        alert("Booking cancelled.");
+                        window.location.reload();
+                    } catch (error) {
+                        alert("Could not connect to the server.");
+                    }
+                });
             });
-    });
-
-});
+        })
+        .catch(error => {
+            console.error(error);
+            bookingDetails.textContent =
+                "Could not load bookings. Please refresh the page.";
         });
     }
+}
 
 const photoViewer = document.getElementById("photo-viewer");
 const viewerImage = document.getElementById("viewer-image");

@@ -238,14 +238,34 @@ function requireAdmin(req, res, next) {
 app.get("/", (req, res) => {
     res.send("Ivory Crest Backend is running!");
 });
-app.get("/api/bookings", (req, res) => {
-    const bookings = db.prepare(`
-        SELECT *,
-        COALESCE(booking_status, 'Pending') AS booking_status
-        FROM bookings
-    `).all();
+app.get("/api/bookings/:booking_id", (req, res) => {
+    const email = String(req.query.email || "").trim();
 
-    res.json(bookings);
+    if (!email) {
+        return res.status(400).json({
+            success: false,
+            message: "Booking email is required."
+        });
+    }
+
+    const booking = db.prepare(`
+        SELECT booking_id, guest_name, guest_email, room_type,
+               checkin, checkout, guests, rooms, total_price,
+               payment_method,
+               COALESCE(booking_status, 'Pending') AS booking_status
+        FROM bookings
+        WHERE booking_id = ?
+          AND LOWER(guest_email) = LOWER(?)
+    `).get(req.params.booking_id, email);
+
+    if (!booking) {
+        return res.status(404).json({
+            success: false,
+            message: "Booking not found. Check your booking ID and email."
+        });
+    }
+
+    res.json(booking);
 });
 // Admin-only bookings
 app.get("/api/admin/bookings", requireAdmin, (req, res) => {
@@ -403,20 +423,45 @@ app.put("/api/bookings/:booking_id/confirm",requireAdmin, (req, res) => {
     });
 });
 app.delete("/api/bookings/:booking_id", (req, res) => {
-    const booking = db.prepare(
-        "DELETE FROM bookings WHERE booking_id = ?"
-    ).run(req.params.booking_id);
+    const email = String(req.query.email || "").trim();
 
-    if (booking.changes === 0) {
-        return res.status(404).json({
+    if (!email) {
+        return res.status(400).json({
             success: false,
-            message: "Booking not found"
+            message: "Booking email is required."
         });
     }
 
+    const booking = db.prepare(`
+        SELECT booking_status
+        FROM bookings
+        WHERE booking_id = ?
+          AND LOWER(guest_email) = LOWER(?)
+    `).get(req.params.booking_id, email);
+
+    if (!booking) {
+        return res.status(404).json({
+            success: false,
+            message: "Booking not found."
+        });
+    }
+
+    if (booking.booking_status === "Confirmed") {
+        return res.status(409).json({
+            success: false,
+            message: "Contact the hotel to cancel a confirmed booking."
+        });
+    }
+
+    db.prepare(`
+        DELETE FROM bookings
+        WHERE booking_id = ?
+          AND LOWER(guest_email) = LOWER(?)
+    `).run(req.params.booking_id, email);
+
     res.json({
         success: true,
-        message: "Booking cancelled successfully"
+        message: "Booking cancelled successfully."
     });
 });
 app.listen(PORT, () => {
