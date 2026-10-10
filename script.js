@@ -777,6 +777,13 @@ if (roomDetailsPage) {
         document.getElementById("room-title").textContent = room.name;
         document.getElementById("room-description").textContent = room.description;
         document.getElementById("room-price").textContent = roomPrice;
+        const bookRoomButton = document.querySelector(
+    ".room-booking-section .home-button"
+);
+
+if (bookRoomButton) {
+    bookRoomButton.href = `booking.html?room=${roomPrice}`;
+}
 
         const facilitiesList = document.getElementById("room-facilities");
         facilitiesList.innerHTML = "";
