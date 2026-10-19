@@ -66,6 +66,26 @@ db.exec(`
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
     )
 `);
+// Backend health check for Render wake-up
+app.get("/api/health", (req, res) => {
+    res.set("Cache-Control", "no-store");
+
+    try {
+        db.prepare("SELECT 1").get();
+
+        res.status(200).json({
+            success: true,
+            status: "ok"
+        });
+    } catch (error) {
+        console.error("Health check failed:", error);
+
+        res.status(503).json({
+            success: false,
+            status: "unavailable"
+        });
+    }
+});
 // Get all reviews
 app.get("/api/reviews", (req, res) => {
 

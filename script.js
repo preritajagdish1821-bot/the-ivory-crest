@@ -1,3 +1,47 @@
+// Wait for the Render backend to wake up
+async function waitForBackend() {
+    for (let attempt = 1; attempt <= 5; attempt++) {
+        const controller = new AbortController();
+
+        const timeoutId = setTimeout(() => {
+            controller.abort();
+        }, 20000);
+
+        try {
+            const response = await fetch(
+                `/api/health?check=${Date.now()}`,
+                {
+                    cache: "no-store",
+                    signal: controller.signal
+                }
+            );
+
+            if (response.ok) {
+                const result = await response.json();
+
+                if (result.success) {
+                    return;
+                }
+            }
+        } catch (error) {
+            console.log(
+                `Backend wake-up attempt ${attempt} failed.`
+            );
+        } finally {
+            clearTimeout(timeoutId);
+        }
+
+        if (attempt < 5) {
+            await new Promise(resolve =>
+                setTimeout(resolve, 2000)
+            );
+        }
+    }
+
+    throw new Error(
+        "The server is still waking up. Please try again shortly."
+    );
+}
 // Get the selected room from the URL
 const urlParams = new URLSearchParams(window.location.search);
 
@@ -126,11 +170,34 @@ if (bookingForm) {
 
         const rooms =
             Number(document.getElementById("rooms-required").textContent) || 1;
-        const availabilityResponse = await fetch(
-    `/api/check-availability?room_type=${encodeURIComponent(roomName)}&checkin=${checkinDate}&checkout=${checkoutDate}`
-);
+        let availabilityResult;
 
-const availabilityResult = await availabilityResponse.json();
+try {
+    availabilityMessage.textContent =
+        "Connecting to booking server...";
+
+    await waitForBackend();
+
+    const availabilityResponse = await fetch(
+        `/api/check-availability?room_type=${encodeURIComponent(roomName)}&checkin=${checkinDate}&checkout=${checkoutDate}`,
+        { cache: "no-store" }
+    );
+
+    if (!availabilityResponse.ok) {
+        throw new Error("Availability check failed.");
+    }
+
+    availabilityResult = await availabilityResponse.json();
+
+} catch (error) {
+    console.error(error);
+
+    alert(
+        "The booking server is waking up. Please wait a moment and try again."
+    );
+
+    return;
+}
 
 if (availabilityResult.availableRooms < rooms) {
     availabilityMessage.textContent =
@@ -1603,7 +1670,7 @@ ratingInputs.forEach(function(input) {
 // Load existing reviews
 if (reviewsList) {
 
-    fetch("/api/reviews")
+    fetch("/api/reviews", { cache: "no-store" })
         .then(function(response) {
             return response.json();
         })
@@ -1651,7 +1718,7 @@ if (reviewsList) {
 // Submit a new review
 if (submitReview) {
 
-    submitReview.addEventListener("click", function() {
+    submitReview.addEventListener("click", async function() {
 
         const selectedRating =
             document.querySelector('input[name="rating"]:checked');
@@ -1670,6 +1737,22 @@ if (submitReview) {
         }
 
         const rating = Number(selectedRating.value);
+        reviewMessage.textContent =
+    "Connecting to review server...";
+
+reviewMessage.style.color = "#8a6d3b";
+
+try {
+    await waitForBackend();
+} catch (error) {
+    console.error(error);
+
+    reviewMessage.textContent =
+        "The server is still waking up. Please try again shortly.";
+
+    reviewMessage.style.color = "#b23b3b";
+    return;
+}
 
         fetch("/api/reviews", {
 
