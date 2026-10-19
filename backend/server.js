@@ -182,6 +182,21 @@ app.delete("/api/reviews/:id",requireAdmin, (req, res) => {
         message: "Review deleted successfully."
     });
 });
+app.post("/api/admin/logout", (req, res) => {
+    const authHeader = req.headers.authorization || "";
+    const token = authHeader.startsWith("Bearer ")
+        ? authHeader.slice(7)
+        : "";
+
+    if (token) {
+        adminSessions.delete(token);
+    }
+
+    res.json({
+        success: true,
+        message: "Logged out successfully."
+    });
+});
 app.post("/api/admin/login", (req, res) => {
 
     const { username, password } = req.body;

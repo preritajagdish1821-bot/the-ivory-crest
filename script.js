@@ -2034,7 +2034,31 @@ if (adminLoginForm) {
 // =========================
 // ADMIN PAGE PROTECTION
 // =========================
+const adminLogout = document.getElementById("admin-logout");
 
+if (adminLogout) {
+    adminLogout.addEventListener("click", async function (event) {
+        event.preventDefault();
+
+        const token = localStorage.getItem("adminToken");
+
+        try {
+            if (token) {
+                await fetch("/api/admin/logout", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Logout request failed:", error);
+        } finally {
+            localStorage.removeItem("adminToken");
+            window.location.replace("admin-login.html");
+        }
+    });
+}
 if (window.location.pathname.toLowerCase().endsWith("admin.html")) {
 
     const adminToken = localStorage.getItem("adminToken");
